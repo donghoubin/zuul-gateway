@@ -3,6 +3,8 @@ package com.mike.zuul.util;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.util.Date;
@@ -13,6 +15,8 @@ import java.util.Date;
  * @Date: 2019/12/1 15:08.
  */
 public class JWTUtil {
+    private static final Logger log = LoggerFactory.getLogger(JWTUtil.class);
+
     public static final String SECRET_KEY = "123456"; //private key
     public static final long TOKEN_EXPIRE_TIME = 5 * 60 * 1000; //token expiration time 5 minutes
     public static final long REFRESH_TOKEN_EXPIRE_TIME = 10 * 60 * 1000; //refreshToken expiration time
@@ -27,7 +31,7 @@ public class JWTUtil {
         try {
             algorithm = Algorithm.HMAC256(SECRET_KEY);
         } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
         String token = JWT.create()
                 .withIssuer(ISSUER) //签发人
@@ -50,7 +54,7 @@ public class JWTUtil {
             verifier.verify(token);
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error(ex.getMessage());
         }
         return false;
     }
@@ -58,11 +62,11 @@ public class JWTUtil {
     /**
      * 从token获取username
      */
-    public static String getUsername(String token){
-        try{
+    public static String getUsername(String token) {
+        try {
             return JWT.decode(token).getClaim("username").asString();
-        }catch(Exception ex){
-            ex.printStackTrace();
+        } catch (Exception ex) {
+            log.error(ex.getMessage());
         }
         return "";
     }

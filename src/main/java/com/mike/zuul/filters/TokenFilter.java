@@ -4,6 +4,8 @@ import com.mike.zuul.util.JWTUtil;
 import com.netflix.zuul.ZuulFilter;
 import com.netflix.zuul.context.RequestContext;
 import com.netflix.zuul.exception.ZuulException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,8 @@ import static org.springframework.cloud.netflix.zuul.filters.support.FilterConst
  */
 @Component
 public class TokenFilter extends ZuulFilter {
+
+    private static final Logger log = LoggerFactory.getLogger(TokenFilter.class);
 
     @Override
     public String filterType() {
@@ -57,7 +61,7 @@ public class TokenFilter extends ZuulFilter {
                 ctx.getResponse().setContentType("text/html;charset=utf-8");
                 ctx.getResponse().getWriter().write("{\"code\": -1,\"message\": \"Token validation must be added\"}");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
             return null;
         }
@@ -67,10 +71,11 @@ public class TokenFilter extends ZuulFilter {
                 ctx.getResponse().setContentType("text/html;charset=utf-8");
                 ctx.getResponse().getWriter().write("{\"code\": -1,\"message\": \"Token authentication failed\"}");
             } catch (IOException e) {
-                e.printStackTrace();
+                log.error(e.getMessage());
             }
             return null;
         }
+        log.info("Authenticate token successfully!");
         return null;
     }
 }
